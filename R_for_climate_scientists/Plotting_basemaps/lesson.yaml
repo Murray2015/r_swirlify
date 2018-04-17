@@ -1,0 +1,143 @@
+- Class: meta
+  Course: R for climate scientists
+  Lesson: Plotting basemaps
+  Author: Murray Hoggett
+  Type: Standard
+  Organization: University of Birmingham, UK
+  Version: 2.4.3
+
+- Class: text
+  Output: Welcome to this Swirl course for climate scientists! This course will show you some useful packages and funtions avaliable in R to help with working with files and plotting data.
+
+- Class: text
+  Output: In this first course we will explore using the marmap package to make simple base maps for our study area.
+
+- Class: cmd_question
+  Output: The marmap package has been installed for you. To use it, we need to load the marmap package into R. Type library("marmap") below and hit enter to load the marmap package.
+  CorrectAnswer: library("marmap")
+  AnswerTests: any_of_exprs('library("marmap")', 'library(marmap)', "library('marmap')")
+  Hint: Type library("marmap"), and hit enter!
+
+- Class: text
+  Output: Nice, the marmap package is now loaded into R, meaning the functions inside marmap are now ready for us to use them!
+
+- Class: text
+  Output: One super useful function marmap has is the getNOAA.bathy() function. This allows us to access the United States National Oceanic and Atmospheric Administration database, and download a grid of seafloor data, without leaving the R console. Cool huh?!
+
+- Class: text
+  Output: The getNOAA.bathy() queries the ETOPO1 dataset, which is commonly used in climate science. The function takes 5 main arguments -  lon1, lon2, lat1, la2 and resolution. As you might guess, lon1 and lon2 are the left and right hand extents of the data the function will get for us, and lat1 and lat2 are the bottom and top extents. The resolution parameter is in minutes. Use a lower resolution (i.e. a bigger number of minutes) for slower connections.
+
+- Class: cmd_question
+  Output: Let's use the getNOAA.bathy() function to get data for the North Atlantic. Let's get data between longitude -50 and 10, and lattitude 35 and 75, with a resolution of 10 minutes. Store the result in a variable called bathy_data. Like this - bathy_data = getNOAA.bathy(Enter the arguments here)
+  CorrectAnswer: bathy_data <- getNOAA.bathy(lon1 = -50, lon2 = 10, lat1 = 35, lat2 = 75, resolution = 10)
+  AnswerTests: omnitest(correctExpr='bathy_data <- getNOAA.bathy(lon1 = -50, lon2 = 10, lat1 = 35, lat2 = 75, resolution = 10)')
+  Hint: Copy and paste this command and hit enter - bathy_data <- getNOAA.bathy(lon1 = -50, lon2 = 10, lat1 = 35, lat2 = 75, resolution = 10)
+
+- Class: text
+  Output: Great, now we have some data! Let's plot a simple contour map of it with the plot command.
+
+- Class: cmd_question
+  Output: Enter plot(bathy_data) below
+  CorrectAnswer: plot(bathy_data)
+  AnswerTests: omnitest(correctExpr=plot(bathy_data))
+  Hint: Type plot(bathy_data), and hit enter!
+
+- Class: cmd_question
+  Output: We can add a sampling location as a point using the points() function. Try adding a point at x=0, y=55, with the arguments col='red' and pch=19.
+  CorrectAnswer: points(x=0, y=55, col='red', pch=19)
+  AnswerTests: omnitest(correctExpr="points(x=0, y=55, col='red', pch=19)")
+  Hint: Copy and paste this - points(x=0, y=55, col='red', pch=19)
+
+- Class: text
+  Output: If you can't see the plot, you might have to expand the pane on the right hand side of R studio and choose the plots tab.
+
+- Class: text
+  Output: So pretty cool huh?! In 2 lines of code we can get bathymetry data and make a basemap.
+
+- Class: cmd_question
+  Output: We can improve the plot with a few of the default function arguments for plot(). Try using the plot command on bathy_data again, but add the image=TRUE argument.
+  CorrectAnswer: plot(bathy_data, image=TRUE)
+  AnswerTests: omnitest(correctExpr='plot(bathy_data, image=TRUE)')
+  Hint: plot(bathy_data, image=TRUE)
+
+- Class: text
+  Output: As you can see, this makes a prettier plot straight away. 
+
+- Class: cmd_question
+  Output: We can continue to use R's base graphics to produce high quality base maps. Let's add a green rectangle to the plot to show our study area. Use the rect() function, between longitudes -30 and -20, and lattitudes 50 and 60. You will need the xleft, xright, ybottom, ytop and border arguments. 
+  CorrectAnswer: rect(xleft = -30, xright = -20,ybottom = 50,ytop = 60, border='green')
+  AnswerTests: omnitest(correctExpr='rect(xleft = -30, xright = -20,ybottom = 50,ytop = 60, border="green")')
+  Hint: Type rect(xleft = -30, xright = -20,ybottom = 50,ytop = 60, border='green') and hit enter!
+
+- Class: text
+  Output: That looks pretty good! Now let's add the text "Study area" to our plot, using the text() function.
+
+- Class: cmd_question
+  Output: Try typing text("study area", x = -25, y=45, col="green") and hitting enter
+  CorrectAnswer: text("study area", x = -25, y=45, col='green') 
+  AnswerTests: omnitest(correctExpr='text("study area", x = -25, y=45, col="green") ')
+  Hint: Type text("study area", x = -25, y=45, col='green') and hit enter!
+
+- Class: text
+  Output: So that map was quite cool! And you can google more about marmap for more on changing the colour paletes and other features you might want to use.
+
+- Class: text
+  Output: But you might just not like R's base graphics much, and you might want to use ggplot, as that has a load of nice graphic options. Our bathy_data variable can be used directly in ggplot, but this can be a bit of a hassle.
+
+- Class: cmd_question
+  Output: Luckily, marmap has a quick interface with ggplot that has some nice options. Try entering the following - autoplot.bathy(bathy_data, geom="contour") and hitting enter
+  CorrectAnswer: autoplot.bathy(bathy_data, geom="contour")
+  AnswerTests: omnitest(correctExpr='autoplot.bathy(bathy_data, geom="contour")')
+  Hint: Type autoplot.bathy(bathy_data, geom="contour") and hit enter!
+
+- Class: cmd_question
+  Output: That's quite pretty! We can also use the autoplot.bathy() function to plot a raster background instead of contours. Try rerunning the previous command, but with the geom argument "tile". Then after that but on the same line, add  + scale_fill_etopo() to use the standard etopo colouscale.
+  CorrectAnswer: autoplot.bathy(bathy_data, geom="tile") + scale_fill_etopo()
+  AnswerTests: omnitest(correctExpr='autoplot.bathy(bathy_data, geom="tile") + scale_fill_etopo()')
+  Hint: Enter autoplot.bathy(bathy_data, geom="tile") + scale_fill_etopo() and hit return!
+
+- Class: text
+  Output: That's a pretty sweet map. But maybe you want your own colourscale. The scale_fill_gradient2() function is the perfect function for this, as it creates a diverging colour palete and a middle value that defaults to zero. 
+
+- Class: cmd_question
+  Output: Let's modify the code we just ran to remake the plot with a custom colourpalete. Try adding + scale_fill_gradient2(low="midnightblue", mid="white", high="darkgreen") instead of scale_fill_etopo() in the last command
+  CorrectAnswer: autoplot.bathy(bathy_data, geom="tile") + scale_fill_gradient2(low="midnightblue", mid="white", high="darkgreen")
+  AnswerTests: omnitest(correctExpr='autoplot.bathy(bathy_data, geom="tile") + scale_fill_gradient2(low="midnightblue", mid="white", high="darkgreen")')
+  Hint: Try running autoplot.bathy(bathy_data, geom="tile") + scale_fill_gradient2(low="midnightblue", mid="white", high="darkgreen")
+
+- Class: text
+  Output: We can also add text, points, rectangles and other things to our autoplot.bath() maps with ggplot2 commands. Experiment to get plots exactly how you want them!
+
+- Class: text
+  Output: As a final trick before the end of the lesson, let's learn how to make a bathymetric transect, and plot a sampling location on it. 
+
+- Class: text
+  Output: Try using the get.transect() function to sample our NOAA bathymetric data ready for plotting.
+
+- Class: cmd_question
+  Output: Try typing the following to store a bathymetric transect in a variable called transect. Then use google to look up the meaning of each argument! Try typing the following and hitting enter - transcect = get.transect(bathy_data,x1=-40, y1=70,x2=0,y2=55, loc=FALSE, dis=TRUE)
+  CorrectAnswer: transcect = get.transect(bathy_data,x1=-40, y1=70,x2=0,y2=55, loc=FALSE, dis=TRUE)
+  AnswerTests: omnitest(correctExpr='transcect = get.transect(bathy_data,x1=-40, y1=70,x2=0,y2=55, loc=FALSE, dis=TRUE)')
+  Hint: Copy and paste the following, and run it! transcect = get.transect(bathy_data,x1=-40, y1=70,x2=0,y2=55, loc=FALSE, dis=TRUE)
+
+- Class: cmd_question
+  Output: Now try running the plotProfile() function, like so - plotProfile(transcect)
+  CorrectAnswer: plotProfile(transcect)
+
+  AnswerTests: omnitest(correctExpr='plotProfile(transcect)')
+  Hint: Type plotProfile(transcect) and hit enter!
+
+- Class: cmd_question
+  Output: Let's add a red sample location line using the abline command as follows - abline(v=1400, col='red', lwd=2)
+  CorrectAnswer: abline(v=1400, col="red", lwd=2)
+  AnswerTests: omnitest(correctExpr='abline(v=1400, col="red", lwd=2)')
+  Hint: Type abline(v=1400, col='red', lwd=2) and hit enter!
+
+- Class: cmd_question
+  Output: Finally, let's use the text() function again to add text to explain what the red line is. Try entering text("Sampling\nlocation",x=2000, y=1800, col='red')
+  CorrectAnswer: text("Sampling\nlocation",x=2000, y=1800, col="red")
+  AnswerTests: omnitest(correctExpr='text("Sampling\nlocation",x=2000, y=1800, col="red")')
+  Hint: Enter text("Sampling\nlocation",x=2000, y=1800, col="red")
+
+- Class: text
+  Output: Congratulation, that's the end of the lesson! That was a lot of code, but you've done great. This lesson wasn't supposed to teach you every single function argument for the functions we have looked at, but it was supposed to whet your apetite and give you an idea of what can be done with the marmap package. Enjoy making basemaps!
