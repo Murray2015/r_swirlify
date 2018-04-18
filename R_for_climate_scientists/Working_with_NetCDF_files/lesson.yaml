@@ -1,0 +1,57 @@
+- Class: meta
+  Course: R_for_climate_scientists
+  Lesson: Working with NetCDF files
+  Author: Murray Hoggett
+  Type: Standard
+  Organization: University of Birmingham, UK
+  Version: 2.4.3
+
+- Class: text
+  Output: Hello, and welcome to the second lesson in the R for climate scientists course. In this lesson we will look at how to use NetCDF files, a common file type for climate model outputs.
+
+- Class: text
+  Output: A NetCDF file normally holds a 2D matrix of numbers in a grid, or a "matrix" as this may be called more technically.
+
+- Class: text
+  Output: The values along the x axis of the grid normally correspond to longitude, and the values on the y axis of the grid normally coresspond to latitude.
+
+- Class: text
+  Output: Note that NetCDF files do not just have to hold 2D data (e.g. lat and long). They can hold 3D data (e.g. lat and long and depth for ocean data) where the data is a 3D matrix. You can think of a 3D matrix as like a cube of data. 
+
+- Class: text
+  Output: In fact NetCDF files can hold many dimensions of data! But let's not get bogged down in the detail. 
+
+- Class: text
+  Output: To use NetCDF files in R, we want to use the ncdf4 package. This package has a load of functions for opening and reading data from NetCDF files. 
+
+- Class: cmd_question
+  Output: Let's load he ncdf4 library into R so we can use it's functions. Enter library("ncdf4") below and hit enter! 
+  CorrectAnswer: library("ncdf4")
+  AnswerTests: omnitest(correctExpr='library("ncdf4")')
+  Hint: Copy and paste library("ncdf4") and hit enter!
+
+- Class: text
+  Output: Cool, so we can now use the functions in ncdf4. To open a NetCDF file in R is a multi stage process. We first open a file connection, then read variables, then read attributes, then close the file. 
+
+- Class: mult_question
+  Output: When reading a NetCDF file with R, what is the first step?
+  AnswerChoices: Opening a file connection; Opening a folder connection; Opening the R webpage; Opening a can of coke
+  CorrectAnswer: Opening a file connection
+  AnswerTests: omnitest(correctVal='Opening a file connection')
+  Hint: It has nothing to do with folders or webpages!
+
+- Class: mult_question
+  Output: So the first step is to open a file connection. The second and third steps are to read variables and attributes. But what is the last step?
+  AnswerChoices: Closing the file connection; Plotting the data; Making a basemap; Opening a file connection
+  CorrectAnswer: Closing the file connection
+  AnswerTests: omnitest(correctVal='Closing the file connection')
+  Hint: No plotting of basemaps are required...
+
+- Class: text
+  Output: Ok, looks like you've got the idea. So we said the first step of reading a NetCDF file is to open a folder connection. This is done with the nc_read() function, where we pass the name of the dataset into the function as the only argument.
+
+- Class: cmd_question
+  Output: A dataset yield.nc has beeen downloaded for this tutorial. Use the nc_read() function to open a folder connection, and save this to a variable called ncfile.
+  CorrectAnswer: ncfile = nc_open("yield.nc")
+  AnswerTests: omnitest(correctExpr='ncfile = nc_open("yield.nc")')
+  Hint: Try typing ncfile = nc_open("yield.nc") and hitting enter!
