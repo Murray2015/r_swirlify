@@ -10,13 +10,13 @@
   Output: Hello, and welcome to the second lesson in the R for climate scientists course. In this lesson we will look at how to use NetCDF files, a common file type for climate model outputs.
 
 - Class: text
-  Output: A NetCDF file normally holds a 2D matrix of numbers in a grid, or a "matrix" as this may be called more technically.
+  Output: A NetCDF file normally holds a 2D grid of numbers, or a "matrix" as this may be called more technically.
 
 - Class: text
   Output: The values along the x axis of the grid normally correspond to longitude, and the values on the y axis of the grid normally coresspond to latitude.
 
 - Class: text
-  Output: Note that NetCDF files do not just have to hold 2D data (e.g. lat and long). They can hold 3D data (e.g. lat and long and depth for ocean data) where the data is a 3D matrix. You can think of a 3D matrix as like a cube of data. 
+  Output: Note that NetCDF files do not just have to hold 2D data (e.g. lat and long). They can hold 3D data (e.g. lat and long and depth for ocean data, or lat and long and time for climate model output data) where the data is a 3D matrix. You can think of a 3D matrix as like a cube of data. 
 
 - Class: text
   Output: In fact NetCDF files can hold many dimensions of data! But let's not get bogged down in the detail. 
@@ -48,10 +48,127 @@
   Hint: No plotting of basemaps are required...
 
 - Class: text
-  Output: Ok, looks like you've got the idea. So we said the first step of reading a NetCDF file is to open a folder connection. This is done with the nc_read() function, where we pass the name of the dataset into the function as the only argument.
+  Output: Ok, looks like you've got the idea. So we said the first step of reading a NetCDF file is to open a folder connection. This is done with the nc_open() function, where we pass the name of the dataset into the function as the only argument.
 
 - Class: cmd_question
-  Output: A dataset yield.nc has beeen downloaded for this tutorial. Use the nc_read() function to open a folder connection, and save this to a variable called ncfile.
+  Output: A dataset yield.nc has beeen downloaded for this tutorial. Use the nc_open() function to open a folder connection, and save this to a variable called ncfile. Remember to put the file in quotation marks!
   CorrectAnswer: ncfile = nc_open("yield.nc")
   AnswerTests: omnitest(correctExpr='ncfile = nc_open("yield.nc")')
   Hint: Try typing ncfile = nc_open("yield.nc") and hitting enter!
+
+- Class: text
+  Output: Cool, so we now have a folder connection open and stored in the ncfile variable. The first thing we normally want to do is to get a long printout of the header of the NetCDF file. This can be done with the print(ncfile) command.
+
+- Class: cmd_question
+  Output: Try typing print(ncfile) and reading the long output from it.
+  CorrectAnswer: print(ncfile)
+  AnswerTests: omnitest(correctExpr='print(ncfile)')
+  Hint: Type print(ncfile), and hit enter!
+
+- Class: text
+  Output: Quite a lot of text, I know! This is very useful though. This shows us that there are three dimensions, lat, long and time. The NetCDF file then has variables for time, lon, lat and yield_mai.
+
+- Class: text
+  Output: Near the bottom of the output we find global attributes. Here we find the comment "Crop model output for AgGRID Phase II". Cool, so it looks like this is data on crop yeilds! 
+
+- Class: text
+  Output: So from this output, we can probably assume that this NetCDF file contains a 3D cube of data (lat x long x time), where every value is a crop yield output at that time and spatial location.
+
+- Class: cmd_question
+  Output: So now we have worked out what is in the file, it's time to get that data into variables in R so we can work with it! Try typing lat = ncvar_get(nc=ncfile, varid="lat") to extract the lat variable from the NetCDF file into a lat variable in R.
+  CorrectAnswer: lat = ncvar_get(nc=ncfile, varid="lat")
+  AnswerTests: omnitest(correctExpr='lat = ncvar_get(nc=ncfile, varid="lat")')
+  Hint: Type lat = ncvar_get(nc=ncfile, varid="lat"), and hit enter!
+
+- Class: text
+  Output: Cool, so we have now extracted the latitude variable lat. We could have a look at this variable by just typing it's name at the command line and hitting enter. However NetCDF file can be extremely large. Printing 100 values to the screen is fine, but tens of millions of values might cause some computers to freeze or go nuts! 
+
+- Class: cmd_question
+  Output: A safer way to check is to first run the length() or dim() functions to check the length and dimensions of the variable. Try typing length(lat), to see how long it is.
+  CorrectAnswer: length(lat)
+  AnswerTests: omnitest(correctExpr='length(lat)')
+  Hint: Type length(lat), and hit enter!
+
+- Class: text
+  Output: Ok, that seems pretty small. Lets have a quick look at the contents of lat by just typing it's name at the command line, and hitting enter.
+
+- Class: cmd_question
+  Output: Just type lat and hit enter, to see the contents of lat.
+  CorrectAnswer: lat
+  AnswerTests: omnitest(correctExpr='lat')
+  Hint: Just type the variable name "lat" without quotation marks, and hit enter!
+
+- Class: text
+  Output: That all looks fine! Let's go ahead and use the ncvar_get() function to get the rest of the remaing variables - lon, time and yield.
+
+- Class: cmd_question
+  Output: Get the lon variable using the same proceedure as we did for lat, try typing lon = ncvar_get(nc=ncfile, varid="lon") and hit enter to save the lon variable in the NetCDF file to a variable in R called lon. 
+  CorrectAnswer: lat = ncvar_get(nc=ncfile, varid="lat")
+  AnswerTests: omnitest(correctExpr='lon = ncvar_get(nc=ncfile, varid="lon")')
+  Hint: Type lon = ncvar_get(nc=ncfile, varid="lon"), and hit enter!
+
+- Class: cmd_question
+  Output: Now get the time variable, and store it in a variable called time. 
+  CorrectAnswer: time = ncvar_get(nc=ncfile, varid="time")
+  AnswerTests: omnitest(correctExpr='time = ncvar_get(nc=ncfile, varid="time")')
+  Hint: Enter time = ncvar_get(nc=ncfile, varid="time")
+
+- Class: cmd_question
+  Output: Now get the final variable, yield_mai, and save it as a variable called yield in R
+  CorrectAnswer: yield = ncvar_get(nc=ncfile, varid="yield_mai")
+  AnswerTests: omnitest(correctExpr='yield = ncvar_get(nc=ncfile, varid="yield_mai")')
+  Hint: Try entering yield = ncvar_get(nc=ncfile, varid="yield_mai")
+
+- Class: text
+  Output: In a real analysis project, you would probably next want to run the length() and dim() functions on each variable to find out how big they are, and if they are only a few hundred values or smaller, probably just print them to the screen to check there is northing unexpected lurking in there. We won't get you to do that for all the variables here, but it might be worth doing it for just the yield variable....
+
+- Class: cmd_question
+  Output: Trying running the length() function on the yield variable
+  CorrectAnswer: length(yield)
+  AnswerTests: omnitest(correctExpr='length(yield)')
+  Hint: Enter length(yield)
+
+- Class: text
+  Output: Whoa! That 23 million values. Probably a good thing we didn't print it all out to the screen. Let's next run the dim() function on the yeild variable.
+
+- Class: cmd_question
+  Output: Type dim(yield) to see the dimensions of the yield variable.
+  CorrectAnswer: dim(yield)
+  AnswerTests: omnitest(correctExpr='dim(yield)')
+  Hint: Enter dim(yield)
+
+- Class: text
+  Output: Ok, so the dimension are 360 x 180 x 31. By comparing the lengths of the lat, lon and time variables, we can see they match. So this is indeed a cube of lat x lon x time. Next up, we want to extrac some of the attributes from the NetCDF file using the ncatt_get() function.
+
+- Class: cmd_question
+  Output: Let's extract the units for the yield_mai variable in the NetCDF file. Enter yield_units = ncatt_get(nc=ncfile, varid="yield_mai", attname="units")
+  CorrectAnswer: yield_units = ncatt_get(nc=ncfile, varid="yield_mai", attname="units")
+  AnswerTests: omnitest(correctExpr='yield_units = ncatt_get(nc=ncfile, varid="yield_mai", attname="units")')
+  Hint: Enter yield_units = ncatt_get(nc=ncfile, varid="yield_mai", attname="units")
+
+- Class: text
+  Output: Great, now we've got a variable for the yield units that we can use in plots and things later on, to save us having to type units over and over again. Let's finish up by getting the mission values attribute, and using it to change any missing value to R's prefered missing values placeholder, NA. 
+
+- Class: cmd_question
+  Output: Get the missing_value attribute for the yield_mai variable in the NetCDF file, and store it in a variable called yield_missing.
+  CorrectAnswer: yield_missing = ncatt_get(nc=ncfile, varid="yield", attname="missing_value")
+  AnswerTests: omnitest(correctExpr='yield_missing = ncatt_get(nc=ncfile, varid="yield", attname="missing_value")')
+  Hint: Enter yield_missing = ncatt_get(nc=ncfile, varid="yield", attname="missing_value")
+
+- Class: cmd_question
+  Output: Now let's use some fancy indexing to change all values that have the missing value, into NAs. Enter the following yield = yield[yield==yield_missing$value]
+  CorrectAnswer: yield = yield[yield==yield_missing$value]
+  AnswerTests: omnitest(correctExpr='yield = yield[yield==yield_missing$value]')
+  Hint: Enter yield = yield[yield==yield_missing$value]
+
+- Class: text
+  Output: Phew, that's quite a lot of work! The final stage, is to free up some memory by closing the NetCDF folder connection. We use the nc_close() function for  this. 
+
+- Class: cmd_question
+  Output: Enter nc_close(ncfile) to close the file connection. 
+  CorrectAnswer: nc_close(ncfile)
+  AnswerTests: omnitest(correctExpr='nc_close(ncfile)')
+  Hint: Enter nc_close(ncfile)
+
+- Class: text
+  Output: Well done, that's the end of this lesson on opening, reading, and closing NetCDF files. This might not have been super exciting as lessons go, but you need to know how to work with NetCDF files, as they are very common in climate data. In the next lesson we will start to look at basic ways to plot the data we have just extracted :)
