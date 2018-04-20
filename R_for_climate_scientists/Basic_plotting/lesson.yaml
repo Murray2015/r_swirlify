@@ -1,0 +1,46 @@
+- Class: meta
+  Course: R for climate scientists
+  Lesson: Basic plotting
+  Author: Murray Hoggett
+  Type: Standard
+  Organization: University of Birmingham, UK
+  Version: 2.4.3
+
+- Class: text
+  Output: Hello and welcome to the third lesson in this swirl course on using R for climate science! In this lesson, we are going to build on the skills learnt in the last lesson on reading NetCDF files, to start plotting some of the data extracted from NetCDF files.
+
+- Class: text
+  Output: In this lesson we will cover plotting basic maps, adding modern day country outlines to our maps for context, getting scale bars and changing colour palletes, controlling axes and titles. We will then look at making difference maps to compare the difference between two time periods. 
+
+- Class: text
+  Output: In your workspace we have automatically loaded a few variables and attributes from the yield NetCDF file we looked at in the Working with NetCDF files lesson. We "lat", containing lattitude; "lon", containing longitude; and "yield", containing a 3D matrix of crop yield values. The matrix is 3D because it has axes corresponding to lon x lat x time. This is the results of a climate model output, so time is whatever time step the model was running on. We could look at exactly what times there are, but we won't do that in this lesson.
+
+- Class: text
+  Output: Let's start by making a map of the first time slice of our data. We know the dimensions of our data are lon x lat x time, and we know the datatype our yield values are stored in is a matrix. Therefore we can use the square bracket notation to slice up our matrix. 
+
+- Class: cmd_question
+  Output: Let's use square bracket notation to extract the first slice of our data. Type first_slice = yield[ , , 1] and hit enter!
+  CorrectAnswer: first_slice = yield[ , , 1]
+  AnswerTests: omnitest(correctExpr='first_slice = yield[ , , 1]')
+  Hint: Enter first_slice = yield[ , , 1]
+
+- Class: text
+  Output: Do you understand what we've just done here? Because the dimensions of our 3D matrix are lon x lat x time, this can be extracted with the square brackets, where each for the three places inside the square brackets separated by commas refers to one of the dimensions. Like this - yield[ longitude values go here , latitude values go here , time values go here ] 
+
+- Class: text
+  Output: Leaving one or more of the spaces empty selects all values for that. So running yield[ , , 1] selects all of the longitude values, all of the latitude values, and just the values in the first time dimension. This should give us a 2D matrix with dimensions 360 x 180, as that is the length of the lon and lat variables.
+
+- Class: cmd_question
+  Output: Let's check that the dimensions of our matrix are what we expect. Try running dim(first_slice) below
+  CorrectAnswer: dim(first_slice)
+  AnswerTests: omnitest(correctExpr='dim(first_slice)')
+  Hint: Enter dim(first_slice)
+
+- Class: text
+  Output: Cool, it looks like that worked! 
+
+- Class: cmd_question
+  Output: Now let's have a look at the data by making a quick and dirty map. Enter image(first_slice) below
+  CorrectAnswer: image(first_slice)
+  AnswerTests: omnitest(correctExpr='image(first_slice)')
+  Hint: Enter image(first_slice)
