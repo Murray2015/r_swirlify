@@ -13,34 +13,157 @@
   Output: In this lesson we will cover plotting basic maps, adding modern day country outlines to our maps for context, getting scale bars and changing colour palletes, controlling axes and titles. We will then look at making difference maps to compare the difference between two time periods. 
 
 - Class: text
-  Output: In your workspace we have automatically loaded a few variables and attributes from the yield NetCDF file we looked at in the Working with NetCDF files lesson. We "lat", containing lattitude; "lon", containing longitude; and "yield", containing a 3D matrix of crop yield values. The matrix is 3D because it has axes corresponding to lon x lat x time. This is the results of a climate model output, so time is whatever time step the model was running on. We could look at exactly what times there are, but we won't do that in this lesson.
+  Output: In your workspace we have automatically loaded a few variables and attributes from the yield NetCDF file we looked at in the Working with NetCDF files lesson. We have "lat", containing lattitude; "lon", containing longitude; and "yield", containing a 3D matrix of crop yield values. The matrix is 3D because it has axes corresponding to lon x lat x time.
 
 - Class: text
   Output: Let's start by making a map of the first time slice of our data. We know the dimensions of our data are lon x lat x time, and we know the datatype our yield values are stored in is a matrix. Therefore we can use the square bracket notation to slice up our matrix. 
 
 - Class: cmd_question
-  Output: Let's use square bracket notation to extract the first slice of our data. Type first_slice = yield[ , , 1] and hit enter!
-  CorrectAnswer: first_slice = yield[ , , 1]
-  AnswerTests: omnitest(correctExpr='first_slice = yield[ , , 1]')
-  Hint: Enter first_slice = yield[ , , 1]
+  Output: Let's use square bracket notation to extract the fifth slice of our data. Type fifth_slice = yield[ , , 5] and hit enter!
+  CorrectAnswer: fifth_slice = yield[ , , 1]
+  AnswerTests: omnitest(correctExpr='fifth_slice = yield[ , , 5]')
+  Hint: Enter fifth_slice = yield[ , , 5]
 
 - Class: text
-  Output: Do you understand what we've just done here? Because the dimensions of our 3D matrix are lon x lat x time, this can be extracted with the square brackets, where each for the three places inside the square brackets separated by commas refers to one of the dimensions. Like this - yield[ longitude values go here , latitude values go here , time values go here ] 
+  Output: Do you understand what we've just done here? Because the dimensions of our 3D matrix are lon x lat x time, this can be extracted with the square brackets, where each for the three places inside the square brackets separated by commas refers to one of the dimensions. Like this - yield[longitude,latitude,time] 
 
 - Class: text
-  Output: Leaving one or more of the spaces empty selects all values for that. So running yield[ , , 1] selects all of the longitude values, all of the latitude values, and just the values in the first time dimension. This should give us a 2D matrix with dimensions 360 x 180, as that is the length of the lon and lat variables.
+  Output: Leaving one or more of the spaces empty selects all values for that. So running yield[ , , 5] selects all of the longitude values, all of the latitude values, and just the values in the fifth time dimension. This should give us a 2D matrix with dimensions 360 x 180, as that is the length of the lon and lat variables.
 
 - Class: cmd_question
-  Output: Let's check that the dimensions of our matrix are what we expect. Try running dim(first_slice) below
-  CorrectAnswer: dim(first_slice)
-  AnswerTests: omnitest(correctExpr='dim(first_slice)')
-  Hint: Enter dim(first_slice)
+  Output: Let's check that the dimensions of our matrix are what we expect. Try running dim(fifth_slice) below
+  CorrectAnswer: dim(fifth_slice)
+  AnswerTests: omnitest(correctExpr='dim(fifth_slice)')
+  Hint: Enter dim(fifth_slice)
 
 - Class: text
   Output: Cool, it looks like that worked! 
 
 - Class: cmd_question
-  Output: Now let's have a look at the data by making a quick and dirty map. Enter image(first_slice) below
-  CorrectAnswer: image(first_slice)
-  AnswerTests: omnitest(correctExpr='image(first_slice)')
-  Hint: Enter image(first_slice)
+  Output: Now let's have a look at the data by making a quick and dirty map. Enter image(fifth_slice) below
+  CorrectAnswer: image(fifth_slice)
+  AnswerTests: omnitest(correctExpr='image(fifth_slice)')
+  Hint: Enter image(fifth_slice)
+
+- Class: text
+  Output: Hmm something seems to be wrong - the map is upside down! This sometimes happens in climate model outputs. Luckily in R we can easily fix this
+
+- Class: cmd_question
+  Output: Let's flip the matrix the right way up. Type fifth_slice = yield[ , ncol(yield):1, 5] and hit enter!
+  CorrectAnswer: fifth_slice = yield[ , ncol(yield):1, 5]
+  AnswerTests: omnitest(correctExpr='fifth_slice = yield[ , ncol(yield):1, 5]')
+  Hint: Enter fifth_slice = yield[ , ncol(yield):1, 5]
+
+- Class: text
+  Output: So what did we just do here? Well in R, the colon operator gives us a vector of numbers incremented by 1. So 1:4 gives us 1, 2, 3, 4. So doing nrow(yield):1 gives us a descending list of numbers from the greatest number list down to 1. When used inside the square brackets, this flips the matrix!
+
+- Class: text
+  Output: Ugh, that's quite a wordy explanation. Let's move on and make some more plots!
+
+- Class: cmd_question
+  Output: The "fields" library contains a cool function image.plot(), which has a colour bar as standard. We have loaded the fields package for you. Type image.plot(fifth_slice) to get a new map!
+  CorrectAnswer: image.plot(fifth_slice)
+  AnswerTests: omnitest(correctExpr='image.plot(fifth_slice)')
+  Hint: Enter image.plot(fifth_slice)
+
+- Class: text
+  Output: Nice, so now our map has a colourbar! 
+
+- Class: text
+  Output: This is a good time to make a point about maps. There are many types of map projections. Map projections are methods to project data on a sphere onto a 2D surface to make a map. Different map projections have different strengths and weaknesses.
+
+- Class: text
+  Output: In the maps we are making in this lesson we are not applying any transformations to our data before passing it into the image() function, giving us a type of cylindrical equidistant plot with some strong distortions in shape and area. Be aware of this when interpreting maps made in this way! 
+
+- Class: text
+  Output: So our map so far is starting to look nice, but the axes are wrong - they seem to be going from zero to one. Let's change that by passing the lon and lat values into image.plot() before the fifth_slice variable. 
+
+- Class: cmd_question
+  Output: Rerun the image.plot() command, but pass in the lon and lat variables before the fifth_yield variable.
+  CorrectAnswer: image.plot(lon, lat, fifth_slice)
+  AnswerTests: omnitest(correctExpr='image.plot(lon, lat, fifth_slice)')
+  Hint: Enter image.plot(lon, lat, fifth_slice)
+
+- Class: text
+  Output: Nice! Ok that has fixed those axes. Next up let's add a map overlay using the map() function. We do this on the line after the image.plot() function in a script. Let's see how. 
+
+- Class: cmd_question
+  Output: Add a map overlay by typing map("world", add=T)
+  CorrectAnswer: map("world", add=T)
+  AnswerTests: omnitest(correctExpr='map("world", add=T)')
+  Hint: Enter map("world", add=T)
+
+- Class: text
+  Output: Pretty cool! Note if your plots are looking like there is too much white space around them, this can be altered with the par() function, but we are not going to cover that in this lesson.
+
+- Class: text
+  Output: Now let's change the colour pallete we're using. The RColorBrewer package comes loaded with lots of cool colour palletes. Let's add the argument col=brewer.pal('GnBu', 8) to our image.plot() function to change the colour palette to an *almost* perceptual green - blue scale.
+
+- Class: cmd_question
+  Output: Enter image.plot(lon, lat, fifth_slice, col=brewer.pal('GnBu', 8))
+  CorrectAnswer: image.plot(lon, lat, fifth_slice, col=brewer.pal('GnBu', 8))
+  AnswerTests: omnitest(correctExpr='image.plot(lon, lat, fifth_slice, col=brewer.pal("GnBu", 8))')
+  Hint: Enter image.plot(lon, lat, fifth_slice, col=brewer.pal('GnBu', 8))
+
+- Class: cmd_question
+  Output: It's looking good, but let's clean up those axes labels and add a title. Rerun the last line of code (press the up arrow), but add the arguments xlab="", ylab="", main="Crop yeild".
+  CorrectAnswer: image.plot(lon, lat, fifth_slice, col=brewer.pal("GnBu", 8), xlab="", ylab="", main="Crop yeild")
+  AnswerTests: omnitest(correctExpr='image.plot(lon, lat, fifth_slice, col=brewer.pal("GnBu", 8), xlab="", ylab="", main="Crop yeild")')
+  Hint: Enter image.plot(lon, lat, fifth_slice, col=brewer.pal("GnBu", 8), xlab="", ylab="", main="Crop yeild")
+
+- Class: text
+  Output: Finally, let's look at how to make a difference map
+
+- Class: text
+  Output: A difference map is normally made by subtracting a matrix of a time slice from a different time slice. This is a common way to look at how the variable being mapped has changed between the two time steps. 
+
+- Class: text
+  Output: For example, if you made a difference map between time slice 6 and 5 by subtracting slice 6 from slice 5, posative values on the map would indicate an increase, while negative values would indicate a decrease!
+
+- Class: text
+  Output: Let's try it ourselves! First, let's make a slice representing the 6th time slice. 
+
+- Class: cmd_question
+  Output: Enter sixth_slice = yield[, nrow(yield):1, 6].
+  CorrectAnswer: sixth_slice = yield[, nrow(yield):1, 6]
+  AnswerTests: omnitest(correctExpr='sixth_slice = yield[, nrow(yield):1, 6]')
+  Hint: sixth_slice = yield[, nrow(yield):1, 6]
+
+- Class: cmd_question
+  Output: Find the difference between the 6th and 5th slices by subtracting the sixth_slice from the fifth_slice, and store in a variable called difference_map.
+  CorrectAnswer: difference_map = sixth_slice - fifth_slice
+  AnswerTests: omnitest(correctExpr='difference_map = sixth_slice - fifth_slice')
+  Hint: Enter difference_map = sixth_slice - fifth_slice
+
+- Class: cmd_question
+  Output: Now run the image.plot() function, with the difference_map as it's only argument 
+  CorrectAnswer: image.plot(yeild)
+  AnswerTests: omnitest(correctExpr='image.plot(yeild)')
+  Hint: image.plot(yeild)
+
+- Class: text
+  Output: That's pretty cool! But it would be much easier to interpret with a colour pallete going from one colour to white to another colour. These are often called "polar" colour palletes. 
+
+- Class: cmd_question
+  Output: Let's use the RdBu pallete from the RColorBrewer package. Type image.plot(difference_map, col=brewer.pal("RdBu", 7))
+  CorrectAnswer: image.plot(difference_map, col=brewer.pal("RdBu", 7))
+  AnswerTests: omnitest(correctExpr='image.plot(difference_map, col=brewer.pal("RdBu", 7))')
+  Hint: Enter image.plot(difference_map, col=brewer.pal("RdBu", 7))
+
+- Class: text
+  Output: This is much better! But the final problem is that the white values dont seem to be centered over 0, which is pretty important for a polar colour palete! 
+
+- Class: cmd_question
+  Output: Let's fix this by rerunning the last line of code (hit the up arrow on the keyboard!), and add zlim=c(-4,4) as a function argument. 
+  CorrectAnswer: image.plot(difference_map, col=brewer.pal("RdBu", 7), zlim=c(-4,4))
+  AnswerTests: omnitest(correctExpr='image.plot(difference_map, col=brewer.pal("RdBu", 7), zlim=c(-4,4))')
+  Hint: Enter image.plot(difference_map, col=brewer.pal("RdBu", 7), zlim=c(-4,4))
+
+- Class: text
+  Output: Awesome, and that's the end of the lesson! We have learnt how to extract a time slice from a 3D matrix of data, and how to flip it (if needed). Then we learnt how to make a quick and dirty plot with the image() function, and a better plot with the image.plot() function.
+
+- Class: text
+  Output: We then learnt how to add a map overlay with the map() function, and how to change colour palletes, labels and titles. Finally we learnt to make a difference map, use a polar colour pallete and center that pallete. 
+
+- Class: text
+  Output: That's the end of the lesson. Hope you've enjoyed it! 
