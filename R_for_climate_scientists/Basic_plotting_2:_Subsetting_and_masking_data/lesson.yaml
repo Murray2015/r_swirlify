@@ -1,0 +1,88 @@
+- Class: meta
+  Course: R for climate scientists
+  Lesson: Basic plotting 2, Subsetting and masking data
+  Author: your name goes here
+  Type: Standard
+  Organization: your organization's name goes here
+  Version: 2.4.3
+
+- Class: text
+  Output: Hello! And welcome to the next lesson in this course on R for climate scientists. In this lesson we will look at subsetting our data and using masks for selecting data from different geographical regions. 
+
+- Class: text
+  Output: So why would you want to subset or mask your data? Often the most common reason is for summary statistics. If you have a world grid, and you want the average temperature of Africa, then you might set the values in the rest of the world to NA and then take the average of the whole grid. This idea of "setting all of the stuff you dont want to NA", is called masking. 
+
+- Class: text
+  Output: Similarly, maybe you want to find the mediam temperature in the Northern Hemisphere. A simple way to do this would be to select the top half of the matrix of your world data, and find the median of that subset. This is called subsetting. 
+
+- Class: text
+  Output: Let's look at subsetting first. The first time slice of the yield dataset from previous lessons has been loaded into a matrix called "yield_slice", and the fields package has been loaded for plotting. 
+
+- Class: cmd_question
+  Output: Let's remind ourselves of what the data looks like. Use the image.plot() function with the yield_slice data as it's only argument to plot the data.
+  CorrectAnswer: image.plot(yield_slice)
+  AnswerTests: omnitest(correctExpr='image.plot(yield_slice)')
+  Hint: Try running image.plot(yield_slice)
+
+- Class: text
+  Output: First, let's try to subset just the southern hemisphere. The southern hemisphere goes from -90 to 0 lattitude, and has all longitudes. 
+
+- Class: text
+  Output: However our yield_slice matrix is not in geographic format, it simply runs from 0 at the bottom left hand corner up to the number of rows or columns. We can normally work out with simple maths what row and columns to slice the matrix at through.
+
+- Class: text
+  Output: In our case the yield_slice matrix in in 1 degree lattitude and longitude increments (i.e. the matrix has the shape 360 x 180). Therefore to convert from lattitude to matrix rows we just add 90, and to convert from longitude to matrix columns we just add 180.
+
+- Class: cmd_question
+  Output: Let's try this out. Subset the northern hemisphere from the yield_slice variable, and save in a variable called nh. Use square bracket notation to subset the matrix. The command should look like nh = yield_slice[ , lat_min colon lat_max]
+  CorrectAnswer: nh = yield_slice[,90:180]
+  AnswerTests: omnitest(correctExpr='nh = yield_slice[,90:180]')
+  Hint: Try typing nh = yield_slice[,90:180]
+
+- Class: text
+  Output: Nice work! Now that we have subsetted the northern hemisphere, we could find the mean yield for the northern hemisphere using the mean() function. 
+
+- Class: cmd_question
+  Output: Find the mean of the northern hemisphere yield data, stored in the nh variable. Remember to use the na.rm=TRUE argument to the mean function!
+  CorrectAnswer: mean(nh)
+  AnswerTests: omnitest(correctExpr='mean(nh)')
+  Hint: Type a hint.
+
+- Class: text
+  Output: Similarly, we could subset a rectangle of any geographic area using the square bracket notation. 
+
+- Class: cmd_question
+  Output: Let's subset an area of north Africa from 0 to 30 degrees latittude, and 0 to 40 degrees longitude, and store this in a variable north_africa. Our matrix is in matrix coordinates (0,0 at the bottom corner) rather than geographic coordinates, so remember to add 180 to the longitudes and 90 to the lattitudes.
+  CorrectAnswer: north_africa = yield_slice[180:220, 90:130]
+  AnswerTests: omnitest(correctExpr='north_africa = yield_slice[180:220, 90:130]')
+  Hint: Try typing north_africa = yield_slice[180:220, 90:130]
+
+- Class: text
+  Output: Cool, so hopefully you're pretty comfortable with subsetting data. Let's move on to masking data! 
+
+- Class: text
+  Output: Masking our matrix of data requires us to have a mask of data. We have handily included a mask of data and loaded it into a variable called mask. 
+
+- Class: cmd_question
+  Output: Use the image.plot() command to have a look at the matrix of mask data. 
+  CorrectAnswer: image.plot(mask)
+  AnswerTests: omnitest(correctExpr='image.plot(mask)')
+  Hint: Type image.plot(mask)
+
+- Class: text
+  Output: But what does this image actually mean? What is this mask of data of? We can find more by reading the metadata for the mask. 
+
+- Class: cmd_question
+  Output: The metadata for the mask has been stored in the variable mask_info. Type mask info and read the output. 
+  CorrectAnswer: mask_info
+  AnswerTests: omnitest(correctExpr='mask_info')
+  Hint: Type mask_info and hit enter!
+
+- Class: text
+  Output: From that textual output, it looks like this is a mask of different forest regions around the world. When we plotted the data in the last step we used a continuous color pallete, but this doesn't really make sense. Let's try instead to plot it with a discrete color palette. 
+
+- Class: cmd_question
+  Output: Use the image.plot() function again with the mask data, but this time add the argument col=rainbow(9). (We use 9 because the mask_info said there are 9 forest zones). 
+  CorrectAnswer: image.plot(mask, col=rainbow(9))
+  AnswerTests: omnitest(correctExpr='image.plot(mask, col=rainbow(9))')
+  Hint: Type image.plot(mask, col=rainbow(9))
